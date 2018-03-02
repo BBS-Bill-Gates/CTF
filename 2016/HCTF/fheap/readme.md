@@ -46,6 +46,7 @@ struct {
 } Strings[0x10];
 ```
 > **1. `create string ` **
+
 >> 1. 字符串块<16, 在原来的堆块上存放输入的字符串。
 ![](./01.png) 
 >> 2. 字符串块>=16, `malloc`一个输入的字符串大小size的空间， 将该空间地址存放在原来的堆块中。
@@ -85,14 +86,13 @@ create(0x18, 'a' * 0x18) --> id = 0;
 假如此时, 我们`delete(1)`, 关键代码中的`Strings[1].str ==> 0x6161616161616161`, 为真. 就会执行`0x5058`的函数(longfree).
 由此, 我们可以有这样的设想: create(0x20, content), content中的内容可以覆盖1中的longfree函数. delete(1), 就可以修改程序执行的流程.
 
-**4. 涉及的知识点: **
-
+**4. 涉及的知识点:**
 > 1. `fastbin`的设计是为了快速的分配而准备的, 先进后出.
 详见: https://sploitfun.wordpress.com/2015/02/10/understanding-glibc-malloc/comment-page-1/?spm=a313e.7916648.0.0.rJLhzh
 
 **4. 程序的调试**
-*任何程序都不是一下子能写成功, 需要调试, 如何调试?*
 
+*任何程序都不是一下子能写成功, 需要调试, 如何调试?*
 ```
 from pwn import *
 
@@ -116,13 +116,14 @@ gdb.attach(p)
 ```
 freeShort(offset): 0xd52
 freeLong(offset): 0xd6c
-d2d:	e8 5e fc ff ff       	callq  990 <puts@plt>
+d2d:	e8 5e fc ff ff       	
+callq  990 <puts@plt>
 ```
 可以看出, 两个free函数与0xd2d只相差一个字节, 于是我们可以将free函数的最后一个字节修改为0x2d, 从而调用`puts`函数, 将字符串和`callq  990`这条指令的地址一块打印出来, 然后减去0xd2d, 就是整个程序加载的基地址.
 
 ---------
 
-**泄露system函数地址 **
+**泄露system函数地址**
 
 > 利用格式化字符串漏洞, 以及`pwntools`模块的`DynELF`来找出`system`函数地址.
 ```
