@@ -84,7 +84,9 @@ create(0x18, 'a' * 0x18) --> id = 0;
 ```
 假如此时, 我们`delete(1)`, 关键代码中的`Strings[1].str ==> 0x6161616161616161`, 为真. 就会执行`0x5058`的函数(longfree).
 由此, 我们可以有这样的设想: create(0x20, content), content中的内容可以覆盖1中的longfree函数. delete(1), 就可以修改程序执行的流程.
+
 **4. 涉及的知识点: **
+
 > 1. `fastbin`的设计是为了快速的分配而准备的, 先进后出.
 详见: https://sploitfun.wordpress.com/2015/02/10/understanding-glibc-malloc/comment-page-1/?spm=a313e.7916648.0.0.rJLhzh
 
@@ -108,6 +110,7 @@ gdb.attach(p)
 ![](./03.png)
 
 **总体思路:** 泄露程序基地址, 找出system函数地址. 将free地址覆盖为`system`, 输入`/bin/sh`, 释放.
+
 **First Step : 泄露程序基地址**
 > `objdump -d fheap > fheap.txt`
 ```
@@ -120,6 +123,7 @@ d2d:	e8 5e fc ff ff       	callq  990 <puts@plt>
 ---------
 
 **泄露system函数地址 **
+
 > 利用格式化字符串漏洞, 以及`pwntools`模块的`DynELF`来找出`system`函数地址.
 ```
 def leak(addr):
