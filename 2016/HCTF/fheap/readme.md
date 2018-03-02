@@ -45,7 +45,7 @@ struct {
     String *str;
 } Strings[0x10];
 ```
-> **1. `create string ` **
+> **1. `create string `**
 
 >> 1. 字符串块<16, 在原来的堆块上存放输入的字符串。
 ![](./01.png) 
@@ -87,7 +87,7 @@ create(0x18, 'a' * 0x18) --> id = 0;
 由此, 我们可以有这样的设想: create(0x20, content), content中的内容可以覆盖1中的longfree函数. delete(1), 就可以修改程序执行的流程.
 
 **4. 涉及的知识点:**
-> 1. `fastbin`的设计是为了快速的分配而准备的, 先进后出.
+> `fastbin`的设计是为了快速的分配而准备的, 先进后出.<br>
 详见: https://sploitfun.wordpress.com/2015/02/10/understanding-glibc-malloc/comment-page-1/?spm=a313e.7916648.0.0.rJLhzh
 
 **4. 程序的调试**
