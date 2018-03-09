@@ -1,0 +1,1 @@
+同一个shellcode, 分开的shellcode, 可以使用, 不分开却不行.
