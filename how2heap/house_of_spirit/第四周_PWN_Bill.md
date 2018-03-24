@@ -32,12 +32,16 @@ give me money~
 #### 程序分析
 **1. checksec**
 ![result](./02.png)
+
 **2. 漏洞一 (`off by one`)**
 ![result](./01.png)
+
 > 当输入`48`个字符时, 会触发`off by one`漏洞, 将`0x400A8E`函数栈帧`RBP`打印出来.
 
 **2. 漏洞二 (变量覆盖)**
+
 ![result](./03.png)
+
 ### 漏洞利用
 **两种思路**
 1. **思路(非HOS)**: 初始时输入`shellcode`, 泄露`RBP`,找出`Shellcode`地址. 覆盖dest变量值为`free@got`, `buf`中为`shellcode_addr + 其他任意字符`, 最后:输入`2`, 执行`free`(就是执行我们的`shellcode`).
@@ -113,7 +117,7 @@ p.sendline('3')
 
 p.interactive()
 ```
-###The Whole EXP
+### The Whole EXP
 ```
 from pwn import *
 
