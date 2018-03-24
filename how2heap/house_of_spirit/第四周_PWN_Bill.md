@@ -31,9 +31,11 @@ give me money~
 **good bye**: `exit`
 #### 程序分析
 **1. checksec**
+
 ![result](./02.png)
 
 **2. 漏洞一 (`off by one`)**
+
 ![result](./01.png)
 
 > 当输入`48`个字符时, 会触发`off by one`漏洞, 将`0x400A8E`函数栈帧`RBP`打印出来.
