@@ -1,0 +1,3 @@
+https://david942j.blogspot.com/2016/12/write-up-whitehat-grand-prix-2016_21.html
+https://sensepost.com/blog/2017/linux-heap-exploitation-intro-series-the-magicians-cape-1-byte-overflow/
+https://0x00sec.org/t/null-byte-poisoning-the-magic-byte/3874
