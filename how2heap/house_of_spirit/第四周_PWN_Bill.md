@@ -1,6 +1,4 @@
 ### L-CTF 2016 pwn200
-程序运行
-程序分析
 #### 漏洞简介
 **The house of Spirit**
 > The House of Spirit is a little different from other attacks in the sense that it involves an attacker overwriting an existing pointer before it is 'freed'. The attacker creates a 'fake chunk', which can reside anywhere in the memory (heap, stack, etc.) and overwrites the pointer to point to it. The chunk has to be crafted in such a manner so as to pass all the security tests. This is not difficult and only involves setting the size and next chunk's size. When the fake chunk is freed, it is inserted in an appropriate binlist (preferably a fastbin). A future malloc call for this size will return the attacker's fake chunk. The end result is similar to 'forging chunks attack' described earlier.
@@ -31,13 +29,19 @@ give me money~
 **good bye**: `exit`
 #### 程序分析
 **1. checksec**
+
 ![result](./02.png)
+
 **2. 漏洞一 (`off by one`)**
+
 ![result](./01.png)
+
 > 当输入`48`个字符时, 会触发`off by one`漏洞, 将`0x400A8E`函数栈帧`RBP`打印出来.
 
 **2. 漏洞二 (变量覆盖)**
+
 ![result](./03.png)
+
 ### 漏洞利用
 **两种思路**
 1. **思路(非HOS)**: 初始时输入`shellcode`, 泄露`RBP`,找出`Shellcode`地址. 覆盖dest变量值为`free@got`, `buf`中为`shellcode_addr + 其他任意字符`, 最后:输入`2`, 执行`free`(就是执行我们的`shellcode`).
@@ -113,7 +117,7 @@ p.sendline('3')
 
 p.interactive()
 ```
-###The Whole EXP
+### The Whole EXP
 ```
 from pwn import *
 
