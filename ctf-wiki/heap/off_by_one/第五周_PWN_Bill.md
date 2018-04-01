@@ -86,11 +86,13 @@ b00ks<--0x55865b7c9060:	0x000055865cc0d160(first book)	0x0000000000000000
 
 #### 6. 漏洞分析
 &nbsp;&nbsp;&nbsp;&nbsp;**漏洞点:** 问题出在对`author`的处理上, 当我们输入32个字符时, 程序会将第33个字符赋值为`"\x00"`, 从而出现了`Null Byte Overflow`.
+
 ![result](./01.png)
 
 &nbsp;&nbsp;&nbsp;&nbsp;**思路分析:** 创建两个`b00k`, 在`first b00k`中伪造`b00k`进而控制`second b00k`的`description`指针, 将该指针该为`__free_hook`, 修改`second b00k`的`description`为`execve("/bin/sh")`, 最后`free`
 
-####7. 分步讲解
+#### 7. 分步讲解
+
 **1. 创建第一个`first b00k`**
 ```
 0x55f276c74160:	0x0000000000000001	               0x000055f276c74020--> Name
@@ -130,6 +132,7 @@ b00ks<--0x55865b7c9060:	0x000055865cc0d160(first book)	0x0000000000000000
 0x00007f282b4fe000 0x00007f282b6fe000 ---p	/lib/x86_64-linux-gnu/libc-2.23.so
 ```
 &nbsp;&nbsp;`offset = 0x7f282b8e7010 - 0x00007f282b33e000 = 0x5a9010`
+
 &nbsp;&nbsp;**结论:** 通过伪造的`b00k`, 我们泄露了 `libc base address`.
 
 **4.获取相关指针**
