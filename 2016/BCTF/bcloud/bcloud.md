@@ -1,4 +1,5 @@
-#BCTF 2016 bcloud
+# BCTF 2016 bcloud
+
 ###漏洞简介
 > `House of Force:` 修改`top chunk `的`size`域，来达到我们任意地址读写的目的.
 
@@ -76,7 +77,7 @@ int sub_80487A1()
   return *MK_FP(__GS__, 20) ^ v3;
 }
 ```
-分析: 当我们输入`0x40`字符时, `strcpy`会将字符和`v2地址`一同复制到v2指向的空间. 随后会将`v2`打印出来, 这就是内存泄露.
+&nbsp;&nbsp;&nbsp;&nbsp;分析: 当我们输入`0x40`字符时, `strcpy`会将字符和`v2地址`一同复制到v2指向的空间. 随后会将`v2`打印出来, 这就是内存泄露.
 
 **第二个漏洞点**
 ```
@@ -104,7 +105,8 @@ int sub_804884E()
   return *MK_FP(__GS__, 20) ^ v5;
 }
 ```
-分析: 同样当我们输入`0x40`到`s`中去, `strcpy(v2, &s)`就会将`0x40个字符 + v2地址 + v3内容`一同复制进`v2`,造成复制过多的数据, 这个地方就是修改 `top chunk size`.
+&nbsp;&nbsp;&nbsp;&nbsp;分析: 同样当我们输入`0x40`到`s`中去, `strcpy(v2, &s)`就会将`0x40个字符 + v2地址 + v3内容`一同复制进`v2`,造成复制过多的数据, 这个地方就是修改 `top chunk size`.
+
 **小例子**
 ```c
 #include <stdio.h>
@@ -134,8 +136,10 @@ sbrk_base  0x804b000
 chunk      0x804b000        0x28            (inuse)
 chunk      0x804b028        0x41414140      (already changed)
 ```
-结论: `top chunk size`在`0x804b020`,我们完成可以向s1中输入过量的数据改变`top chunk size`.
+&nbsp;&nbsp;&nbsp;&nbsp;结论: `top chunk size`在`0x804b020`,我们完成可以向s1中输入过量的数据改变`top chunk size`.
+
 ###　过程
+
 **整体思路**
 > &nbsp;&nbsp;&nbsp;&nbsp;修改`top chunk size`为`0xffffffff`, malloc一个赋值, 使`top chunk`分配到`.bss`段附近.
 &nbsp;&nbsp;&nbsp;&nbsp;`0x804b120`中存放的是`content`指针, 通过修改这些指针, 达到任意读写目的.
@@ -191,7 +195,7 @@ p.interactive()
 
 **原因:** 咱们的目的是为了返回`0x804b0a0`, `top chunk`必须为`0x804b098`, 程序中还会为你申请的空间+4, 还要有8字节的`header`,所以是减12, 另外的就是单纯的算距离了.
 
-###完整EXP
+### 完整EXP
 ```python
 from pwn import *
 
@@ -278,6 +282,7 @@ p.recvuntil("Input the length of the note content:\n")
 p.sendline(str(length))
 p.interactive()
 ```
-###相关链接
+### 相关链接
+
 [Link1](https://blog.csdn.net/qq_35519254/article/details/77209175)
 [Link2](https://www.w0lfzhang.com/2017/03/18/2016-BCTF-bcloud/)
