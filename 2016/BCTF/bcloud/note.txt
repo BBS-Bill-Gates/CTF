@@ -1,0 +1,11 @@
+1.信息收集
+输入: 输入更多的数值, 看看会出现什么情况
+
+.bss
+0x804b0cc --> [name] --> name
+0x804b0c8 --> [org]  --> org
+0x804b148 --> [host] --> host
+
+0x804b120 --> [content] --> 
+0x804b0a0 --> [length]
+0x804b0e0 --> [syn]
