@@ -1,6 +1,6 @@
 # BCTF 2016 bcloud
 
-###漏洞简介
+### 漏洞简介
 > `House of Force:` 修改`top chunk `的`size`域，来达到我们任意地址读写的目的.
 
 ### 程序运行(主要功能)
@@ -138,7 +138,7 @@ chunk      0x804b028        0x41414140      (already changed)
 ```
 &nbsp;&nbsp;&nbsp;&nbsp;结论: `top chunk size`在`0x804b020`,我们完成可以向s1中输入过量的数据改变`top chunk size`.
 
-###　过程
+### 过程
 
 **整体思路**
 > &nbsp;&nbsp;&nbsp;&nbsp;修改`top chunk size`为`0xffffffff`, malloc一个赋值, 使`top chunk`分配到`.bss`段附近.
@@ -190,7 +190,7 @@ p.sendline(str(length))
 p.interactive()
 ```
 ### 相关问题
-*改变top chunk至.bss是什么算的?*
+*改变`top chunk`至`.bss`是什么算的?*
 > `0x804b0a0 - 8 - (leak + 0x48*3 -8) - 12`
 
 **原因:** 咱们的目的是为了返回`0x804b0a0`, `top chunk`必须为`0x804b098`, 程序中还会为你申请的空间+4, 还要有8字节的`header`,所以是减12, 另外的就是单纯的算距离了.
