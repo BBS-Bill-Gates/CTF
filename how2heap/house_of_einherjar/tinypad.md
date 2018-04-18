@@ -192,7 +192,7 @@ edit(4, "D"*0x20 + p64(0) + p64(0x101) + p64(main_arena + 0x58)*2) #修复unsort
 
 **3.攻击**
 
-> 将`main`函数的返回值地址修改为`one_gadget`地址
+> &nbsp;&nbsp;&nbsp;&nbsp;将`main`函数的返回值地址修改为`one_gadget`地址
 > 由于程序是现将`size`和`s`先存放入数组, 后读取内容,　我们可以控制`index`1指向的地址.
 
 ```python
