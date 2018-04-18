@@ -1,0 +1,9 @@
+main函数的返回值地址会在占中存放.
+
+
+现在得到了libc和heap的地址啦，使用edit在tinypad里面伪造一个chunk，伪造的chunksize要为tinypad到chunk1的距离.
+释放chunk3,会进行合并,此时堆为：chunk0 chunk1(used) topchunk
+再次分配一个0x100大小的chunk，会malloc chunk0到第一个位置，此时对其写入256字节数据，就会覆盖到chunk1的pre_use位，并且写的数据中pre_size要改为到tinypad的距离.
+释放chunk1，会前向与后向合并，此时topchunk就指向tinypad了
+再次分配就可获得tinypad区域，对其进行操作覆盖关键位置(指针处)，即可任意位置读写
+
