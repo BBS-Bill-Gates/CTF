@@ -1,4 +1,4 @@
-#Pwnable.tw之BookWriter
+# Pwnable.tw之BookWriter
 ### 知识点
 > &nbsp;&nbsp;&nbsp;&nbsp;`FSOP`是`FILE Stream Oriented Programming`的缩写, 进程内所有的`_IO_FILE`结构会使用`_chain`域相互连接成一个链表, 这个链表的头部由`_IO_list_all`维护.
 > &nbsp;&nbsp;&nbsp;&nbsp;`FSOP`的核心思想就是劫持`_IO_list_all`的值来伪造链表和其中的`_IO_FILE`项, 但是单纯的伪造只是伪造了数据还需要某种方法进行触发.
@@ -69,6 +69,7 @@ edit(0, "B"*0x18)
 edit(0, "\x00"*0x18 + "\xe1" + "\x0f")
 ```
 *长度错误*
+
 ![result](./01.png)
 
 ### 过程介绍
@@ -88,6 +89,7 @@ for i in range(7):
 View(2, 3)
 ```
 ![result02](./02.png)
+
 **2. 伪造**
 
 *解析:* 前面讲到有一个长度错误, 这个长度错误就是会将`index 0`的长度修改成一个地址, 这意味着我们可以输入很多的数据, 修改`top chunk`.
@@ -265,4 +267,4 @@ p.interactive()
 [CTF-WiKi](https://ctf-wiki.github.io/ctf-wiki/pwn/io_file/introduction/)
 [wolfzhang](https://www.w0lfzhang.com/2016/11/19/File-Stream-Pointer-Overflow/)
 [ret2forever](http://tacxingxing.com/2018/01/12/pwnabletw-bookwriter/)
-[文件下载]()
+[文件下载](https://github.com/BBS-Bill-Gates/CTF/tree/master/how2heap/house_of_orange/bookwriter)
