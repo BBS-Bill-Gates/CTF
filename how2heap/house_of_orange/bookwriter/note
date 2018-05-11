@@ -1,0 +1,9 @@
+author: 0x602060
+heap_address: 0x6020a0
+number: 0x602040
+size: 0x6020E0
+add:0x4009aa
+view: 0x400a99
+edit: 0x400b27
+info:0x400c04
+source code: genops.c
