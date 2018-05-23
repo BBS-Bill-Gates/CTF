@@ -1,0 +1,1 @@
+atoi return four byte, so system & 0xffffffff
